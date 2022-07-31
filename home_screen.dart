@@ -5,24 +5,25 @@ import 'package:untitled41/Screens/new_page.dart';
 import '../modles/money.dart';
 
 class HomeScreen extends StatefulWidget {
-   const HomeScreen({Key? key}) : super(key: key);
-  static List <Money> moneys= [ Money (
-  id: 0 ,
-  title:'test1',
-  data: "1400/01/01",
-  isReceived: true,
-    price: '1000',
-  ),
-    Money (
-      id: 1 ,
-      title:'test2',
+  const HomeScreen({Key? key}) : super(key: key);
+  static List<Money> moneys = [
+    Money(
+      id: 0,
+      title: 'test1',
+      data: "1400/01/01",
+      isReceived: false,
+      price: '1000',
+    ),
+    Money(
+      id: 1,
+      title: 'test2',
       data: "1400/02/01",
       isReceived: true,
       price: '2000',
     ),
-    Money (
-      id: 2 ,
-      title:'test3',
+    Money(
+      id: 2,
+      title: 'test3',
       data: "1400/03/01",
       isReceived: false,
       price: '4000',
@@ -40,18 +41,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return SafeArea(
       child: Scaffold(
         backgroundColor: Colors.white,
-        floatingActionButton: FloatingActionButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const NewPage(),
-                ),
-              );
-            },
-            backgroundColor: const Color(0XFF6C63FF),
-            elevation: 0,
-            child: const Icon(Icons.add)),
+        floatingActionButton: fabWidget(),
         body: SizedBox(
           width: double.infinity,
           child: Column(
@@ -85,24 +75,45 @@ class _HomeScreenState extends State<HomeScreen> {
               //  const Spacer(),
               //const SizedBox(height: 10.0),
               //  const Text('تراکنشی موجود نیست! '),
-             Expanded(
-               child: ListView.builder(itemCount: HomeScreen.moneys.length,
-
-                   itemBuilder: (context,indext){
-                 return MyListTilWidget(index: indext);
-               }
-               ),
-             )
+              Expanded(
+                child: ListView.builder(
+                    itemCount: HomeScreen.moneys.length,
+                    itemBuilder: (context, indext) {
+                      return MyListTilWidget(index: indext);
+                    }),
+              )
             ],
           ),
         ),
       ),
     );
   }
+  Widget fabWidget(){
+    return  FloatingActionButton(
+    onPressed: () {
+    NewPage.descriptionController.text='';
+    NewPage.priceController.text='';
+    NewPage.groupId=0;
+
+    Navigator.push(
+    context,
+    MaterialPageRoute(
+    builder: (context) => const NewPage(),
+    ),
+    ).then((value){setState((){
+    print('Reflesh');
+    });
+    });
+    },
+    backgroundColor: const Color(0XFF6C63FF),
+    elevation: 0,
+    child: const Icon(Icons.add),);
+  }
 }
+
 class MyListTilWidget extends StatelessWidget {
   final int index;
-  const MyListTilWidget({Key? key,required this.index}) : super(key: key);
+  const MyListTilWidget({Key? key, required this.index}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -114,14 +125,21 @@ class MyListTilWidget extends StatelessWidget {
             width: 50,
             height: 50,
             decoration: BoxDecoration(
-                color: Colors.pink,
+                color: HomeScreen.moneys[index].isReceived
+                    ? const Color(0XFF6C63FF)
+                    : const Color(0XFF00C89C),
                 borderRadius: BorderRadius.circular(15.0)),
-            child: const Center(
-              child: Icon(Icons.add, color: Colors.white, size: 30),
+            child: Center(
+              child: Icon(
+                  HomeScreen.moneys[index].isReceived
+                      ? Icons.add
+                      : Icons.remove,
+                  color: Colors.white,
+                  size: 30),
             ),
           ),
-           Padding(
-            padding:const EdgeInsets.only(left: 15.0),
+          Padding(
+            padding: const EdgeInsets.only(left: 15.0),
             child: Text(HomeScreen.moneys[index].title),
           ),
           const Spacer(),
@@ -133,7 +151,10 @@ class MyListTilWidget extends StatelessWidget {
                     'تومان',
                     style: TextStyle(color: Colors.pink),
                   ),
-                  Text(HomeScreen.moneys[index].price,style: const TextStyle(color: Colors.pink),)
+                  Text(
+                    HomeScreen.moneys[index].price,
+                    style: const TextStyle(color: Colors.pink),
+                  )
                 ],
               ),
               Text(HomeScreen.moneys[index].data),
@@ -144,4 +165,3 @@ class MyListTilWidget extends StatelessWidget {
     );
   }
 }
-

@@ -1,7 +1,14 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:untitled41/Screens/home_screen.dart';
+import 'package:untitled41/modles/money.dart';
 
 class NewPage extends StatefulWidget {
   const NewPage({Key? key}) : super(key: key);
+  static int groupId=0;
+  static TextEditingController descriptionController= TextEditingController();
+  static TextEditingController priceController= TextEditingController();
 
   @override
   State<NewPage> createState() => _NewPageState();
@@ -22,9 +29,9 @@ class _NewPageState extends State<NewPage> {
               'تراکنش جدید',
               style: TextStyle(fontSize: 18),
             ),
-            const MyTextField(hintText: 'توضیحات'),
-            const MyTextField(
-              hintText: 'مبلغ',
+             MyTextField(hintText: 'توضیحات',controller: NewPage.descriptionController,),
+             MyTextField(
+              hintText: 'مبلغ',controller: NewPage.priceController,
               type: TextInputType.number,
             ),
             TextButton(
@@ -33,10 +40,34 @@ class _NewPageState extends State<NewPage> {
                   'تاریخ',
                   style: TextStyle(color: Colors.black),
                 )),
-             MyRadio(value: 0, groupValue: 1000, onChanged: (value){},
+             MyRadio(value: 1,
+                 groupValue: NewPage.groupId,
+                 onChanged: (value){
+               setState((){
+                 NewPage.groupId=value!;
+               });
+             },
                  text: 'پرداختی'),
-            MyRadio(value: 1, groupValue: 1000, onChanged: (value){},
+            MyRadio(value: 2, groupValue:  NewPage.groupId,
+                onChanged: (value){
+                  setState((){
+                    NewPage.groupId=value!;
+                  });
+                },
                 text: 'دریافتی'),
+            Container(width: 500,height: 50,color:Colors.indigo,
+              child: ElevatedButton(onPressed: (){
+                HomeScreen.moneys.add(
+                    Money(id:Random().nextInt(99999),
+                        title:NewPage.descriptionController.text,
+                        price:NewPage.priceController.text,
+                        isReceived:NewPage.groupId==1? true:false,
+                        data: '1400/01/01'),);
+                Navigator.pop(context);
+              },
+                  child:const Text('اضافه کردن')
+              ),
+            )
           ],
         ),
       ),
@@ -46,8 +77,9 @@ class _NewPageState extends State<NewPage> {
 class MyTextField extends StatelessWidget {
   final TextInputType type;
   final String hintText;
+  final TextEditingController controller;
   const MyTextField(
-      {Key? key, required this.hintText, this.type = TextInputType.text})
+      {Key? key,required this.controller, required this.hintText, this.type = TextInputType.text})
       : super(key: key);
 
   @override
@@ -82,7 +114,8 @@ class MyRadio extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row (mainAxisAlignment: MainAxisAlignment.end,
-      children: [Radio(value: value,
+      children: [Radio(activeColor: const Color(0XFF6C63FF),
+          value: value,
           groupValue: groupValue,
           onChanged: onChanged),
         Text(text),
