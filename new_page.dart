@@ -9,6 +9,8 @@ class NewPage extends StatefulWidget {
   static int groupId=0;
   static TextEditingController descriptionController= TextEditingController();
   static TextEditingController priceController= TextEditingController();
+  static bool isEditing= false;
+  static int indext=0;
 
   @override
   State<NewPage> createState() => _NewPageState();
@@ -25,9 +27,9 @@ class _NewPageState extends State<NewPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            const Text(
-              'تراکنش جدید',
-              style: TextStyle(fontSize: 18),
+             Text(
+              NewPage.isEditing? 'ویرایش تراکنش' : "تراکنش جدید",
+              style: const TextStyle(fontSize: 18),
             ),
              MyTextField(hintText: 'توضیحات',controller: NewPage.descriptionController,),
              MyTextField(
@@ -57,15 +59,19 @@ class _NewPageState extends State<NewPage> {
                 text: 'دریافتی'),
             Container(width: 500,height: 50,color:Colors.indigo,
               child: ElevatedButton(onPressed: (){
-                HomeScreen.moneys.add(
-                    Money(id:Random().nextInt(99999),
-                        title:NewPage.descriptionController.text,
-                        price:NewPage.priceController.text,
-                        isReceived:NewPage.groupId==1? true:false,
-                        data: '1400/01/01'),);
+                Money item =
+                  Money(id:Random().nextInt(99999),
+                      title:NewPage.descriptionController.text,
+                      price:NewPage.priceController.text,
+                      isReceived:NewPage.groupId==1? true:false,
+                      data: '1400/01/01');
+                if(NewPage.isEditing){
+                  HomeScreen.moneys[NewPage.indext]= item;
+                }
+                else{HomeScreen.moneys.add(item);}
                 Navigator.pop(context);
               },
-                  child:const Text('اضافه کردن')
+                  child: Text(NewPage.isEditing? 'ویرایش کردن': "اضافه کردن")
               ),
             )
           ],

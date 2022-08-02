@@ -66,20 +66,42 @@ class _HomeScreenState extends State<HomeScreen> {
                   ],
                 ),
               ),
-              // const Spacer(),
-              //Image.asset(
-              //  'assets/download.jpeg',
-              // width: 150,
-              //  height: 150,
-              //),
-              //  const Spacer(),
-              //const SizedBox(height: 10.0),
-              //  const Text('تراکنشی موجود نیست! '),
               Expanded(
-                child: ListView.builder(
+                child:HomeScreen.moneys.isEmpty? EmptyWidget() :  ListView.builder(
                     itemCount: HomeScreen.moneys.length,
                     itemBuilder: (context, indext) {
-                      return MyListTilWidget(index: indext);
+                      return GestureDetector(onTap: (){
+                        NewPage.descriptionController.text=HomeScreen.moneys[indext].title;
+                        NewPage.priceController.text=HomeScreen.moneys[indext].price;
+                        NewPage.groupId= HomeScreen.moneys[indext].isReceived? 1:2;
+                        NewPage.isEditing= true;
+                        NewPage.indext=indext;
+                        Navigator.push(context, MaterialPageRoute(builder: (context)=> const NewPage()
+                          ,)
+                        ). then((value){setState((){});
+                        });
+                      },
+                          onLongPress: (){
+                        showDialog(context: context, builder: (context)=> AlertDialog(
+                          actionsAlignment: MainAxisAlignment.spaceBetween,
+                          title:const Text('آیا از حذف مطمئن هستید؟',style: TextStyle(fontSize: 12.0,),textAlign: TextAlign.end,),
+                          actions: [TextButton(onPressed: (){
+                            Navigator.pop(context);
+                          }, child: const Text('خیر',style: TextStyle(color: Colors.blue),)),
+                            TextButton(onPressed: (){
+                              setState((){
+                                HomeScreen.moneys.removeAt(indext);
+                              });
+                              Navigator.pop(context);
+                            }, child: const Text("بله",style: TextStyle(color: Colors.red),))],
+                        ));
+                        setState((){
+                          HomeScreen.moneys.removeAt(indext);
+                        });
+                      },
+                          child: MyListTilWidget(index: indext)
+
+                      );
                     }),
               )
             ],
@@ -88,12 +110,25 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
+  // ignore: non_constant_identifier_names
+  Widget EmptyWidget(){
+    return
+    Column(
+      children:[Container(width: 250,height: 250,
+        child:Image.asset('assets/12.jpg')),
+       const  SizedBox(height: 10.0),
+     const Text('تراکنشی موجود نیست '),
+      ]
+    );
+}
+
   Widget fabWidget(){
     return  FloatingActionButton(
     onPressed: () {
     NewPage.descriptionController.text='';
     NewPage.priceController.text='';
     NewPage.groupId=0;
+    NewPage.isEditing=false;
 
     Navigator.push(
     context,
