@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
+import 'package:hive/hive.dart';
 import 'package:untitled41/Screens/home_screen.dart';
 import 'package:untitled41/Screens/info_screen.dart';
+
+import '../modles/money.dart';
 
 class mainScreen extends StatefulWidget {
   @override

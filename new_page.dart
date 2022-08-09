@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:untitled41/Screens/home_screen.dart';
 import 'package:untitled41/modles/money.dart';
 
@@ -17,6 +18,7 @@ class NewPage extends StatefulWidget {
 }
 
 class _NewPageState extends State<NewPage> {
+  Box <Money> hiveBox= Hive.box<Money> ('moneyBox');
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -66,9 +68,11 @@ class _NewPageState extends State<NewPage> {
                       isReceived:NewPage.groupId==1? true:false,
                       data: '1400/01/01');
                 if(NewPage.isEditing){
-                  HomeScreen.moneys[NewPage.indext]= item;
+                 hiveBox.putAt(NewPage.indext, item);
                 }
-                else{HomeScreen.moneys.add(item);}
+                else{//HomeScreen.moneys.add(item);
+                 hiveBox.add(item);
+                  }
                 Navigator.pop(context);
               },
                   child: Text(NewPage.isEditing? 'ویرایش کردن': "اضافه کردن")
